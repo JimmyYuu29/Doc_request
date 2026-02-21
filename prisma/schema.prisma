@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ──
+
+enum UserRole {
+  OWNER
+  ADMIN
+  VIEWER
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum RequestStatus {
+  DRAFT
+  SENT
+  IN_PROGRESS
+  PARTIAL
+  SUBMITTED
+  REVIEW
+  READY_TO_CLOSE
+  CLOSED
+  OVERDUE
+}
+
+enum EvidenceStatus {
+  PENDING
+  SUBMITTED
+  VALIDATED
+  REJECTED
+}
+
+enum EvidenceType {
+  PDF
+  EXCEL
+  WORD
+  IMAGE
+  EMAIL
+  SCREENSHOT
+  ACCESS
+  MEETING_MINUTES
+  OTHER
+}
+
+enum EntityType {
+  CAMPAIGN
+  REQUEST
+  EVIDENCE
+  SUBMISSION
+  TOKEN
+  OTP
+  FILE
+  USER
+}
+
+enum AuditAction {
+  CAMPAIGN_CREATED
+  CAMPAIGN_UPDATED
+  CAMPAIGN_ACTIVATED
+  CAMPAIGN_COMPLETED
+  CAMPAIGN_ARCHIVED
+  REQUEST_CREATED
+  REQUEST_SENT
+  REQUEST_REMINDER_SENT
+  REQUEST_ESCALATED
+  REQUEST_CLOSED
+  EVIDENCE_SUBMITTED
+  EVIDENCE_VALIDATED
+  EVIDENCE_REJECTED
+  SUBMISSION_CREATED
+  TOKEN_GENERATED
+  TOKEN_VALIDATED
+  TOKEN_EXPIRED
+  OTP_SENT
+  OTP_VALIDATED
+  OTP_FAILED
+  FILE_UPLOADED
+  FILE_ARCHIVED_SP
+  USER_LOGIN
+  USER_LOGOUT
+}
+
+// ── Models ──
+
+model User {
+  user_id        String   @id @default(uuid()) @db.Uuid
+  email          String   @unique
+  display_name   String
+  role           UserRole @default(OWNER)
+  department     String?
+  password_hash  String
+  created_at     DateTime @default(now())
+
+  owned_campaigns  Campaign[] @relation("CampaignOwner")
+  backup_campaigns Campaign[] @relation("CampaignBackup")
+
+  @@map("users")
+}
+
+model Campaign {
+  campaign_id       String         @id @default(uuid()) @db.Uuid
+  name              String
+  control_code      String
+  description       String?
+  owner_user_id     String         @db.Uuid
+  backup_user_id    String?        @db.Uuid
+  start_date        DateTime
+  end_date          DateTime
+  reminder_policy   Json?
+  escalation_policy Json?
+  email_template    String?        @db.Text
+  status            CampaignStatus @default(DRAFT)
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+
+  owner    User  @relation("CampaignOwner", fields: [owner_user_id], references: [user_id])
+  backup   User? @relation("CampaignBackup", fields: [backup_user_id], references: [user_id])
+  requests Request[]
+
+  @@index([status])
+  @@index([owner_user_id])
+  @@index([control_code])
+  @@map("campaigns")
+}
+
+model Request {
+  request_id       String        @id @default(uuid()) @db.Uuid
+  campaign_id      String        @db.Uuid
+  recipient_email  String
+  recipient_name   String
+  cc_emails        Json?
+  delegate_email   String?
+  deadline         DateTime
+  status           RequestStatus @default(DRAFT)
+  token_hash       String?
+  token_expires_at DateTime?
+  reminder_count   Int           @default(0)
+  last_reminder_at DateTime?
+  escalation_level Int           @default(0)
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  closed_at        DateTime?
+
+  campaign       Campaign       @relation(fields: [campaign_id], references: [campaign_id])
+  evidence_items EvidenceItem[]
+  submissions    Submission[]
+
+  @@index([campaign_id])
+  @@index([status])
+  @@index([deadline])
+  @@index([recipient_email])
+  @@index([status, deadline, reminder_count])
+  @@map("requests")
+}
+
+model EvidenceTemplate {
+  template_id          String       @id @default(uuid()) @db.Uuid
+  name                 String
+  category             String?
+  type                 EvidenceType
+  default_instructions String?      @db.Text
+  is_global            Boolean      @default(true)
+  created_at           DateTime     @default(now())
+
+  evidence_items EvidenceItem[]
+
+  @@map("evidence_templates")
+}
+
+model EvidenceItem {
+  evidence_id      String         @id @default(uuid()) @db.Uuid
+  request_id       String         @db.Uuid
+  template_id      String?        @db.Uuid
+  name             String
+  type             EvidenceType
+  is_mandatory     Boolean        @default(true)
+  instructions     String?        @db.Text
+  status           EvidenceStatus @default(PENDING)
+  rejection_reason String?
+  validated_by     String?
+  validated_at     DateTime?
+  file_sp_path     String?
+  file_sp_url      String?
+  file_size_bytes  Int?
+  file_mime_type   String?
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+
+  request          Request          @relation(fields: [request_id], references: [request_id])
+  template         EvidenceTemplate? @relation(fields: [template_id], references: [template_id])
+  submission_files SubmissionFile[]
+
+  @@index([request_id])
+  @@index([status])
+  @@map("evidence_items")
+}
+
+model Submission {
+  submission_id    String   @id @default(uuid()) @db.Uuid
+  request_id       String   @db.Uuid
+  submitted_by_email String
+  submitted_at     DateTime @default(now())
+  ip_address       String?
+  user_agent       String?
+  notes            String?  @db.Text
+
+  request Request          @relation(fields: [request_id], references: [request_id])
+  files   SubmissionFile[]
+
+  @@index([request_id])
+  @@map("submissions")
+}
+
+model SubmissionFile {
+  file_id           String   @id @default(uuid()) @db.Uuid
+  submission_id     String   @db.Uuid
+  evidence_id       String   @db.Uuid
+  original_filename String
+  stored_filename   String
+  mime_type         String
+  size_bytes        Int
+  sp_path           String?
+  sp_url            String?
+  uploaded_at       DateTime @default(now())
+
+  submission Submission   @relation(fields: [submission_id], references: [submission_id])
+  evidence   EvidenceItem @relation(fields: [evidence_id], references: [evidence_id])
+
+  @@index([submission_id])
+  @@index([evidence_id])
+  @@map("submission_files")
+}
+
+model AuditLog {
+  log_id      String      @id @default(uuid()) @db.Uuid
+  entity_type EntityType
+  entity_id   String      @db.Uuid
+  action      AuditAction
+  actor_email String
+  actor_ip    String?
+  timestamp   DateTime    @default(now())
+  details     Json?
+  campaign_id String?     @db.Uuid
+
+  @@index([entity_type, entity_id])
+  @@index([campaign_id])
+  @@index([timestamp(sort: Desc)])
+  @@index([action])
+  @@map("audit_logs")
+}

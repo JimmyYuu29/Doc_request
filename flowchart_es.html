@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Recopilación de Evidencias – Flujo de Proceso</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f2;
+    --surface: #ffffff;
+    --ink: #1a1814;
+    --ink-light: #6b6560;
+    --ink-faint: #b0ada8;
+    --line: #e0ddd9;
+    --accent: #2c3e50;
+    --gold: #9b8c6e;
+    --gold-light: #c4b49a;
+    --green: #3d6b52;
+    --red: #8b3a3a;
+    --amber: #8b6914;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 80px 24px 100px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 5vw, 54px);
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.15;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+  }
+  header h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .divider-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .divider-header::before,
+  .divider-header::after {
+    content: '';
+    width: 60px;
+    height: 1px;
+    background: var(--gold-light);
+  }
+  .diamond {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+  header p {
+    font-size: 13px;
+    color: var(--ink-light);
+    letter-spacing: 0.3px;
+    line-height: 1.7;
+  }
+
+  /* ── LAYOUT ── */
+  .flow {
+    max-width: 780px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── PHASE CARD ── */
+  .phase {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: rise 0.6s ease both;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--gold);
+    padding: 28px 36px;
+    cursor: pointer;
+    transition: box-shadow 0.3s, border-color 0.3s;
+    position: relative;
+  }
+  .card:hover {
+    box-shadow: 0 8px 40px rgba(0,0,0,0.07);
+    border-color: var(--gold-light);
+  }
+  .card.open {
+    box-shadow: 0 12px 50px rgba(0,0,0,0.09);
+    border-top-color: var(--accent);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .phase-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1;
+    width: 36px;
+    flex-shrink: 0;
+  }
+  .phase-info { flex: 1; }
+  .phase-info h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0.2px;
+    margin-bottom: 3px;
+  }
+  .phase-info p {
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.5px;
+  }
+  .toggle-icon {
+    font-size: 12px;
+    color: var(--ink-faint);
+    transition: transform 0.35s;
+    flex-shrink: 0;
+  }
+  .card.open .toggle-icon { transform: rotate(180deg); }
+
+  /* ── CARD BODY ── */
+  .card-body {
+    display: none;
+    padding-top: 28px;
+    margin-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .card.open .card-body {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: flex;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-dot {
+    width: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 6px;
+    flex-shrink: 0;
+  }
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+  .dot.auto { background: var(--accent); }
+  .dot.decision { background: transparent; border: 1.5px solid var(--gold); }
+  .step-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink-light);
+    flex: 1;
+  }
+  .step-text strong { color: var(--ink); font-weight: 500; }
+
+  /* Decision box */
+  .decision {
+    margin: 16px 0;
+    border-left: 2px solid var(--gold-light);
+    padding-left: 20px;
+  }
+  .decision-q {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .branches {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .branch {
+    flex: 1;
+    min-width: 180px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink-light);
+  }
+  .branch-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .branch.yes .branch-label { color: var(--green); }
+  .branch.no  .branch-label { color: var(--red); }
+  .branch.yes { border-left: 2px solid var(--green); }
+  .branch.no  { border-left: 2px solid var(--red); }
+
+  /* Status pill */
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 2px 9px;
+    border: 1px solid;
+    border-radius: 0;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .pill.draft  { color: var(--ink-faint); border-color: var(--ink-faint); }
+  .pill.sent   { color: var(--accent);    border-color: var(--accent); }
+  .pill.partial{ color: var(--amber);     border-color: var(--amber); }
+  .pill.review { color: #5a4a8a;          border-color: #5a4a8a; }
+  .pill.ready  { color: var(--green);     border-color: var(--green); }
+  .pill.closed { color: var(--green);     border-color: var(--green); background: rgba(61,107,82,0.06); }
+
+  /* ── CONNECTOR ── */
+  .connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2px 0;
+  }
+  .conn-line {
+    width: 1px;
+    height: 36px;
+    background: linear-gradient(to bottom, var(--gold-light), var(--line));
+  }
+  .conn-mark {
+    width: 5px; height: 5px;
+    background: var(--gold-light);
+    transform: rotate(45deg);
+    margin: -2px 0;
+  }
+
+  /* ── OUTCOMES ── */
+  .outcomes-wrap {
+    width: 100%;
+    margin-top: 16px;
+  }
+  .outcomes-title {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .outcomes-sub {
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .outcomes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 600px) {
+    .outcomes-grid { grid-template-columns: 1fr; }
+  }
+  .outcome {
+    background: var(--surface);
+    padding: 24px 22px;
+  }
+  .outcome-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .outcome-label .bar {
+    width: 20px; height: 1.5px;
+    flex-shrink: 0;
+  }
+  .outcome.green .outcome-label { color: var(--green); }
+  .outcome.green .bar            { background: var(--green); }
+  .outcome.amber .outcome-label  { color: var(--amber); }
+  .outcome.amber .bar            { background: var(--amber); }
+  .outcome.red   .outcome-label  { color: var(--red); }
+  .outcome.red   .bar            { background: var(--red); }
+  .outcome p {
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ink-light);
+  }
+
+  /* Guarantee banner */
+  .guarantee {
+    width: 100%;
+    margin-top: 1px;
+    background: var(--accent);
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+    padding: 16px 24px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+  }
+  .guarantee strong { color: #fff; font-weight: 500; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    margin-top: 70px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  footer span {
+    display: inline-block;
+    margin: 0 12px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Documentación interna · Flujo de proceso</div>
+  <h1>Sistema de <em>Recopilación</em><br>de Evidencias</h1>
+  <div class="divider-header"><div class="diamond"></div></div>
+  <p>Haga clic en cada fase para desplegar el detalle del proceso</p>
+</header>
+
+<div class="flow">
+
+  <!-- FASE 1 -->
+  <div class="phase" style="animation-delay:.04s">
+    <div class="card" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="phase-num">01</div>
+        <div class="phase-info">
+          <h3>Creación de la campaña</h3>
+          <p>El responsable del control inicia la solicitud de información</p>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-dot"><div class="dot"></div></div>
+            <div class="step-text">El responsable accede a la aplicación y crea una nueva campaña. Introduce el <strong>nombre de la campaña</strong>, el <strong>código de control</strong>, las fechas de inicio y fin, el responsable principal y alternativo, la <strong>fecha límite de respuesta</strong> y las reglas de recordatorio automático.</div>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-q">¿Se confirma el inicio de la campaña?</div>
+          <div class="branches">
+            <div class="branch no"><span class="branch-label">No</span>La campaña se guarda como borrador <span class="pill draft">Borrador</span>. No se envía ninguna comunicación.</div>
+            <div class="branch yes"><span class="branch-label">Sí</span>La campaña queda registrada y se avanza a la siguiente fase.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="conn-line"></div><div class="conn-mark"></div></div>
+
+  <!-- FASE 2 -->
+  <div class="phase" style="animation-delay:.08s">
+    <div class="card" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="phase-num">02</div>
+        <div class="phase-info">
+          <h3>Destinatarios y documentación</h3>
+          <p>Definición de a quién se solicita y qué evidencias son requeridas</p>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-dot"><div class="dot"></div></div>
+            <div class="step-text">El usuario puede definir destinatarios de dos formas: seleccionando primero un <strong>manager o socio</strong> y asignándole las evidencias necesarias, o bien seleccionando primero las <strong>evidencias</strong> y asignándolas a varios destinatarios a la vez.</div>
+          </div>
+          <div class="step">
+            <div class="step-dot"><div class="dot auto"></div></div>
+            <div class="step-text">El sistema genera una <strong>solicitud individual</strong> para cada destinatario con un identificador único. Antes del envío, el usuario puede revisar y ajustar documentación, fechas o personas en copia.</div>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-q">¿Se confirma el envío de las solicitudes?</div>
+          <div class="branches">
+            <div class="branch no"><span class="branch-label">No</span>Las solicitudes permanecen editables. No se realiza ninguna acción.</div>
+            <div class="branch yes"><span class="branch-label">Sí</span>El sistema bloquea la configuración y genera los <strong>enlaces individuales</strong> para cada destinatario.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="conn-line"></div><div class="conn-mark"></div></div>
+
+  <!-- FASE 3 -->
+  <div class="phase" style="animation-delay:.12s">
+    <div class="card" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="phase-num">03</div>
+        <div class="phase-info">
+          <h3>Envío automático de comunicaciones</h3>
+          <p>El sistema remite un correo individual a cada destinatario</p>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-dot"><div class="dot auto"></div></div>
+            <div class="step-text">El correo incluye: el <strong>código del control</strong>, el identificador de la solicitud, la lista de documentación requerida, la fecha límite y el <strong>enlace de acceso</strong> al entorno de carga.</div>
+          </div>
+          <div class="step">
+            <div class="step-dot"><div class="dot auto"></div></div>
+            <div class="step-text">El estado de cada solicitud cambia a <span class="pill sent">Enviada</span>.</div>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-q">¿El correo se entrega correctamente?</div>
+          <div class="branches">
+            <div class="branch no"><span class="branch-label">No</span>El sistema registra el error. El responsable puede reenviar manualmente.</div>
+            <div class="branch yes"><span class="branch-label">Sí</span>Se queda a la espera de la actuación del destinatario.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="conn-line"></div><div class="conn-mark"></div></div>
+
+  <!-- FASE 4 -->
+  <div class="phase" style="animation-delay:.16s">
+    <div class="card" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="phase-num">04</div>
+        <div class="phase-info">
+          <h3>Acceso y envío de documentación</h3>
+          <p>El destinatario sube archivos y evidencias desde su enlace personal</p>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-dot"><div class="dot decision"></div></div>
+            <div class="step-text">Si el enlace es <strong>inválido o ha caducado</strong>, el sistema lo comunica y el proceso queda en pausa hasta que el responsable genere un nuevo acceso.</div>
+          </div>
+          <div class="step">
+            <div class="step-dot"><div class="dot"></div></div>
+            <div class="step-text">Si el enlace es válido, el destinatario puede subir archivos, adjuntar evidencias o añadir <strong>explicaciones escritas</strong>. Admite envíos parciales: no es obligatorio completar todo en un único momento.</div>
+          </div>
+          <div class="step">
+            <div class="step-dot"><div class="dot auto"></div></div>
+            <div class="step-text">Tras cada envío, el sistema notifica automáticamente al responsable. El estado pasa a <span class="pill partial">Parcial</span> o <span class="pill review">Pendiente de revisión</span> según si la documentación está completa.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="conn-line"></div><div class="conn-mark"></div></div>
+
+  <!-- FASE 5 -->
+  <div class="phase" style="animation-delay:.20s">
+    <div class="card" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="phase-num">05</div>
+        <div class="phase-info">
+          <h3>Revisión por parte del responsable</h3>
+          <p>Validación o rechazo de cada evidencia presentada</p>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-dot"><div class="dot"></div></div>
+            <div class="step-text">El responsable revisa cada documento individualmente: lo marca como <strong>válido</strong> (queda registrado como aceptado) o lo <strong>rechaza</strong> indicando el motivo del rechazo.</div>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-q">¿Todas las evidencias obligatorias han sido validadas correctamente?</div>
+          <div class="branches">
+            <div class="branch no"><span class="branch-label">No</span>El sistema genera automáticamente una <strong>solicitud de subsanación</strong> con únicamente los elementos pendientes. Se envía un nuevo correo al destinatario y el proceso retoma la fase 04.</div>
+            <div class="branch yes"><span class="branch-label">Sí</span>La solicitud pasa al estado <span class="pill ready">Lista para cerrar</span>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="conn-line"></div><div class="conn-mark"></div></div>
+
+  <!-- FASE 6 -->
+  <div class="phase" style="animation-delay:.24s">
+    <div class="card" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="phase-num">06</div>
+        <div class="phase-info">
+          <h3>Recordatorios y escalado automático</h3>
+          <p>Notificaciones escalonadas ante la falta de respuesta</p>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-dot"><div class="dot auto"></div></div>
+            <div class="step-text">El sistema verifica diariamente si existe alguna solicitud pendiente dentro del plazo. Cuando se supera el umbral configurado, activa el siguiente nivel de aviso.</div>
+          </div>
+          <div class="step">
+            <div class="step-dot"><div class="dot"></div></div>
+            <div class="step-text"><strong>Nivel 1 —</strong> Recordatorio enviado únicamente al destinatario principal.</div>
+          </div>
+          <div class="step">
+            <div class="step-dot"><div class="dot"></div></div>
+            <div class="step-text"><strong>Nivel 2 —</strong> Sin respuesta, se incorpora en copia al delegado o asistente del destinatario.</div>
+          </div>
+          <div class="step">
+            <div class="step-dot"><div class="dot"></div></div>
+            <div class="step-text"><strong>Nivel 3 —</strong> Si continúa sin respuesta, el sistema puede incluir en copia a un socio u otro nivel jerárquico superior.</div>
+          </div>
+          <div class="step">
+            <div class="step-dot"><div class="dot auto"></div></div>
+            <div class="step-text">Cada recordatorio queda registrado con <strong>fecha y hora</strong>. El contador de avisos de la solicitud se incrementa automáticamente.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="conn-line"></div><div class="conn-mark"></div></div>
+
+  <!-- FASE 7 -->
+  <div class="phase" style="animation-delay:.28s">
+    <div class="card" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="phase-num">07</div>
+        <div class="phase-info">
+          <h3>Cierre de la solicitud</h3>
+          <p>El responsable formaliza y bloquea la solicitud completada</p>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-dot"><div class="dot decision"></div></div>
+            <div class="step-text">Si el responsable decide no cerrar todavía, la solicitud permanece en estado <span class="pill ready">Lista para cerrar</span> sin modificaciones.</div>
+          </div>
+        </div>
+        <div class="decision">
+          <div class="decision-q">¿El responsable confirma el cierre?</div>
+          <div class="branches">
+            <div class="branch no"><span class="branch-label">Aún no</span>La solicitud permanece en estado <span class="pill ready">Lista para cerrar</span>.</div>
+            <div class="branch yes"><span class="branch-label">Sí</span>El sistema bloquea la solicitud y genera automáticamente el <strong>informe completo</strong> del proceso.</div>
+          </div>
+        </div>
+        <div class="steps" style="margin-top:16px;">
+          <div class="step">
+            <div class="step-dot"><div class="dot auto"></div></div>
+            <div class="step-text">El informe recoge: fecha de envío inicial, fechas de respuesta, número de recordatorios, validaciones, rechazos y fecha de cierre. Estado final: <span class="pill closed">Cerrada</span>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="conn-line"></div><div class="conn-mark"></div></div>
+
+  <!-- FASE 8 -->
+  <div class="phase" style="animation-delay:.32s">
+    <div class="card" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="phase-num">08</div>
+        <div class="phase-info">
+          <h3>Archivo y reporte final</h3>
+          <p>Almacenamiento estructurado y acceso al panel de campaña</p>
+        </div>
+        <div class="toggle-icon">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-dot"><div class="dot auto"></div></div>
+            <div class="step-text">Toda la documentación se archiva en la carpeta correspondiente al <strong>código del control</strong> y la campaña específica. El informe generado queda almacenado junto con las evidencias.</div>
+          </div>
+          <div class="step">
+            <div class="step-dot"><div class="dot"></div></div>
+            <div class="step-text">Desde el panel principal de la campaña, el responsable puede visualizar el estado global, consultar <strong>estadísticas de cumplimiento</strong>, identificar retrasos y descargar el informe completo para fines de auditoría o control interno.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTCOMES -->
+  <div class="connector"><div class="conn-line"></div><div class="conn-mark"></div></div>
+  <div class="outcomes-wrap">
+    <div class="outcomes-title">Escenarios de resolución</div>
+    <div class="outcomes-sub">Resultado final del proceso</div>
+    <div class="outcomes-grid">
+      <div class="outcome green">
+        <div class="outcome-label"><div class="bar"></div>Proceso completado</div>
+        <p>El destinatario entrega toda la documentación correctamente y dentro del plazo. El proceso finaliza sin recordatorios ni escalados.</p>
+      </div>
+      <div class="outcome amber">
+        <div class="outcome-label"><div class="bar"></div>Subsanación activada</div>
+        <p>La documentación es incompleta o incorrecta. El sistema activa automáticamente el circuito de subsanación hasta completar los requisitos.</p>
+      </div>
+      <div class="outcome red">
+        <div class="outcome-label"><div class="bar"></div>Sin respuesta</div>
+        <p>No hay respuesta dentro del plazo establecido. Se activan recordatorios escalonados y el posible escalado jerárquico.</p>
+      </div>
+    </div>
+    <div class="guarantee">
+      En todos los casos, el sistema garantiza <strong>trazabilidad completa</strong>, registro cronológico de eventos y <strong>archivo estructurado de evidencias</strong>.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span>Forvis Mazars</span>·<span>Documentación interna</span>·<span>Sistema de Evidencias</span>
+</footer>
+
+<script>
+  function toggle(card) {
+    card.classList.toggle('open');
+  }
+  // Expand first card on load
+  document.querySelector('.card').classList.add('open');
+</script>
+</body>
+</html>

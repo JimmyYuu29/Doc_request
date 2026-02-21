@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors;
+  }
+
+  .card {
+    @apply rounded-xl border border-gray-200 bg-white p-6 shadow-sm;
+  }
+
+  .input {
+    @apply block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-draft { @apply bg-gray-100 text-gray-700; }
+  .badge-active { @apply bg-blue-100 text-blue-700; }
+  .badge-sent { @apply bg-blue-100 text-blue-700; }
+  .badge-in-progress { @apply bg-yellow-100 text-yellow-700; }
+  .badge-partial { @apply bg-orange-100 text-orange-700; }
+  .badge-submitted { @apply bg-indigo-100 text-indigo-700; }
+  .badge-review { @apply bg-purple-100 text-purple-700; }
+  .badge-validated { @apply bg-green-100 text-green-700; }
+  .badge-ready { @apply bg-green-100 text-green-700; }
+  .badge-completed { @apply bg-green-100 text-green-700; }
+  .badge-closed { @apply bg-green-100 text-green-700; }
+  .badge-rejected { @apply bg-red-100 text-red-700; }
+  .badge-overdue { @apply bg-red-100 text-red-700; }
+  .badge-pending { @apply bg-gray-100 text-gray-600; }
+  .badge-archived { @apply bg-gray-100 text-gray-500; }
+}

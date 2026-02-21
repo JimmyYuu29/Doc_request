@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.log
+uploads/
+.next/
+client/node_modules/
+client/.next/
+client/out/
+*.tsbuildinfo
+.DS_Store
+Thumbs.db

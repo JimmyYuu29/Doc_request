@@ -1,0 +1,46 @@
+---
+config:
+  layout: elk
+---
+flowchart LR
+    A1["1️⃣ Crear Campaña
+Usuario define:
+- Nombre
+- Código de control
+- Fechas
+- Responsable
+- Reglas de recordatorio"] --> A2["2️⃣ Seleccionar destinatarios
+Elegir managers / socios"]
+    A2 --> A3["3️⃣ Definir documentación requerida
+Seleccionar lista de evidencias
+(obligatorias / opcionales)"]
+    A3 --> A4["4️⃣ Revisar y confirmar envío"]
+    A4 --> B1["📧 Sistema envía correos individuales
+Cada destinatario recibe:
+- Lista de documentos
+- Fecha límite
+- Enlace para responder"]
+    B1 --> C1["5️⃣ Destinatario accede al enlace"]
+    C1 --> C2["6️⃣ Sube documentación
+Puede enviar:
+- Archivos
+- Aclaraciones
+- Evidencias parciales"]
+    C2 --> C3["Sistema registra la entrega
+y notifica al responsable"]
+    C3 --> D1["7️⃣ Responsable revisa documentación"]
+    D1 --> D2{"¿Documentación completa y válida?"}
+    D2 -- No --> D3["8️⃣ Solicitar información adicional
+(solo lo pendiente)"]
+    D3 --> C1
+    D2 -- Sí --> D4["9️⃣ Marcar como completado"]
+    D4 --> E1["🔟 Cierre de solicitud"]
+    E1 --> E2["Generación automática de informe
+(Registro completo del proceso)"]
+    E2 --> E3["Archivo final en carpeta del control"]
+    E3 --> F1["📊 Dashboard de campaña
+Visualización de:
+- Estado de cada solicitud
+- Pendientes
+- Retrasos
+- Historial completo"]

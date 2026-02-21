@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(where:*)",
+      "Bash(docker info:*)",
+      "Bash(docker version:*)",
+      "Bash(powershell -Command \"Get-Service -Name ''*postgres*'' 2>$null | Format-Table Name,Status,DisplayName -AutoSize\")",
+      "Bash(powershell -Command:*)",
+      "Bash(timeout:*)",
+      "Bash(npx prisma db seed:*)",
+      "Bash(npm install)",
+      "Bash(curl:*)",
+      "Bash(powershell -File -:*)"
+    ]
+  }
+}
